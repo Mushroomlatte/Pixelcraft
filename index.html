@@ -1,460 +1,214 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24x24 Pixel Art Converter</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Pixel Art 24x24 Converter & Parts List</title>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .pixel-canvas {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        p.subtitle {
+            color: #7f8c8d;
+            margin-top: 0;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .upload-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+        #canvas-container {
+            margin-top: 20px;
+            display: inline-block;
+            border: 4px solid #2c3e50;
+            border-radius: 4px;
+            background: #fff;
+            line-height: 0;
+        }
+        canvas {
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            width: 360px;
+            height: 360px;
+            display: block;
+        }
+        .actions {
+            margin-top: 15px;
+        }
+        .btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 5px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #27ae60;
+        }
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        #parts-list {
+            text-align: left;
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            background: #fafafa;
+        }
+        .part-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .color-preview-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body>
 
-    <!-- Header -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <i class="fa-solid fa-shapes text-white"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">PixelGrid 24x24</h1>
-                    <p class="text-xs text-slate-400">Convert photos into bead/tile grids</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-2">
-                <button id="themeToggle" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition" title="Toggle Theme">
-                    <i class="fa-solid fa-moon" id="themeIcon"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+    <h1>24x24 Pixel Art Converter</h1>
+    <p class="subtitle">Upload any image to generate a solid-color 24x24 grid with a precise parts count.</p>
 
-    <!-- Main Content -->
-    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div class="card">
+        <label for="imageUpload" class="upload-btn">Choose Image</label>
+        <input type="file" id="imageUpload" accept="image/*">
         
-        <!-- Left Panel: Controls & Upload -->
-        <div class="lg:col-span-5 space-y-6">
-            
-            <!-- Upload Box -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center">
-                    <i class="fa-solid fa-cloud-arrow-up mr-2 text-indigo-400"></i> 1. Upload Source Image
-                </h2>
-
-                <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-8 text-center cursor-pointer transition bg-slate-950/40 hover:bg-indigo-500/5 relative group">
-                    <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10">
-                    <div class="w-12 h-12 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition shadow-inner">
-                        <i class="fa-solid fa-image text-lg"></i>
-                    </div>
-                    <p class="font-medium text-sm text-slate-200">Drag & drop your image here</p>
-                    <p class="text-xs text-slate-400 mt-1">or click to browse files (PNG, JPG, WEBP)</p>
-                </div>
-            </div>
-
-            <!-- Settings Panel -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center">
-                    <i class="fa-solid fa-sliders mr-2 text-indigo-400"></i> 2. Grid Settings
-                </h2>
-
-                <!-- Grid dimensions fixed reminder -->
-                <div class="bg-indigo-950/40 border border-indigo-900/50 rounded-xl p-3 flex items-center space-x-3">
-                    <i class="fa-solid fa-circle-info text-indigo-400"></i>
-                    <span class="text-xs text-indigo-200">Target Output Resolution locked to strictly <strong>24 × 24</strong></span>
-                </div>
-
-                <!-- Color Palette restriction -->
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-2">Color Mode / Palette Quantization</label>
-                    <select id="paletteSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
-                        <option value="none">Full Color (True Color 24x24)</option>
-                        <option value="beads16">Perler Bead Palette (Standard 16)</option>
-                        <option value="pastel">Soft Pastel Tone Adjustment</option>
-                        <option value="monochrome">Monochrome / Grayscale</option>
-                    </select>
-                </div>
-
-                <!-- Brightness Slider -->
-                <div>
-                    <div class="flex justify-between text-xs font-medium text-slate-300 mb-2">
-                        <span>Brightness Adjustment</span>
-                        <span id="brightnessVal">0</span>
-                    </div>
-                    <input type="range" id="brightnessRange" min="-100" max="100" value="0" class="w-full accent-indigo-500 bg-slate-950 rounded-lg cursor-pointer">
-                </div>
-
-                <!-- Contrast Slider -->
-                <div>
-                    <div class="flex justify-between text-xs font-medium text-slate-300 mb-2">
-                        <span>Contrast Enhancement</span>
-                        <span id="contrastVal">0</span>
-                    </div>
-                    <input type="range" id="contrastRange" min="-100" max="100" value="0" class="w-full accent-indigo-500 bg-slate-950 rounded-lg cursor-pointer">
-                </div>
-
-                <!-- Toggles -->
-                <div class="space-y-3 pt-2">
-                    <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-xs font-medium text-slate-300">Show Grid Lines Overlay</span>
-                        <input type="checkbox" id="showGridToggle" checked class="w-4 h-4 accent-indigo-500 rounded bg-slate-950 border-slate-800">
-                    </label>
-                    <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-xs font-medium text-slate-300">Rounded Bead/Tile Aesthetic Style</span>
-                        <input type="checkbox" id="roundedTileToggle" checked class="w-4 h-4 accent-indigo-500 rounded bg-slate-950 border-slate-800">
-                    </label>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="pt-2 flex gap-3">
-                    <button id="processBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-xl shadow-lg shadow-indigo-600/30 transition text-sm flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>Process 24x24</span>
-                    </button>
-                    <button id="downloadBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-3 px-4 rounded-xl transition text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Download Grid Image">
-                        <i class="fa-solid fa-download"></i>
-                    </button>
-                </div>
-            </div>
-
+        <div id="canvas-container" style="display: none;">
+            <canvas id="pixelCanvas" width="24" height="24"></canvas>
         </div>
 
-        <!-- Right Panel: Live Preview & Details -->
-        <div class="lg:col-span-7 space-y-6">
-            
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col items-center justify-center relative min-h-[450px]">
-                
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-6 w-full flex items-center justify-between">
-                    <span><i class="fa-solid fa-eye mr-2 text-indigo-400"></i> 3. Live 24x24 Pixel Grid Preview</span>
-                    <span id="dimensionBadge" class="text-xs bg-indigo-500/10 text-indigo-400 px-2.5 py-1 rounded-full border border-indigo-500/20 font-mono">24 x 24</span>
-                </h2>
-
-                <!-- Canvas Container -->
-                <div id="previewContainer" class="relative group p-4 bg-slate-950/60 border border-slate-800/80 rounded-2xl shadow-inner flex items-center justify-center w-full max-w-[400px] aspect-square">
-                    <!-- Placeholder state -->
-                    <div id="emptyState" class="text-center p-6 text-slate-500">
-                        <i class="fa-solid fa-image text-4xl mb-3 opacity-40"></i>
-                        <p class="text-sm">Upload an image to render preview</p>
-                    </div>
-                    <!-- Actual processed canvas -->
-                    <canvas id="pixelCanvas" class="w-full h-full object-contain rounded-lg hidden pixel-canvas"></canvas>
-                </div>
-
-                <!-- Details / Stats -->
-                <div id="statsContainer" class="w-full grid grid-cols-3 gap-3 mt-6 text-center hidden">
-                    <div class="bg-slate-950/50 border border-slate-800/60 rounded-xl p-3">
-                        <span class="block text-xs text-slate-500 uppercase font-medium">Grid Width</span>
-                        <span class="text-sm font-semibold text-slate-200 font-mono mt-0.5">24 px</span>
-                    </div>
-                    <div class="bg-slate-950/50 border border-slate-800/60 rounded-xl p-3">
-                        <span class="block text-xs text-slate-500 uppercase font-medium">Grid Height</span>
-                        <span class="text-sm font-semibold text-slate-200 font-mono mt-0.5">24 px</span>
-                    </div>
-                    <div class="bg-slate-950/50 border border-slate-800/60 rounded-xl p-3">
-                        <span class="block text-xs text-slate-500 uppercase font-medium">Total Squares</span>
-                        <span class="text-sm font-semibold text-indigo-400 font-mono mt-0.5">576</span>
-                    </div>
-                </div>
-
-            </div>
-
+        <div class="actions">
+            <button id="downloadBtn" class="btn" disabled>Download 24x24 Image</button>
         </div>
+    </div>
 
-    </main>
+    <div class="card" id="parts-card" style="display: none;">
+        <h3>Pixel Count Breakdown</h3>
+        <p style="font-size: 13px; color: #666; margin-top:0;">Number of pixels needed per color code:</p>
+        <div id="parts-list"></div>
+    </div>
 
-    <!-- Footer Info -->
-    <footer class="mt-auto py-6 border-t border-slate-900 text-center text-xs text-slate-500">
-        <p>Designed for Perler Bead layouts and precise tile art conversion.</p>
-    </footer>
-
-    <!-- JavaScript Application Logic -->
     <script>
-        // DOM Elements
-        const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('dropZone');
-        const processBtn = document.getElementById('processBtn');
+        const imageUpload = document.getElementById('imageUpload');
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasContainer = document.getElementById('canvas-container');
         const downloadBtn = document.getElementById('downloadBtn');
-        const pixelCanvas = document.getElementById('pixelCanvas');
-        const emptyState = document.getElementById('emptyState');
-        const statsContainer = document.getElementById('statsContainer');
-        const paletteSelect = document.getElementById('paletteSelect');
-        const brightnessRange = document.getElementById('brightnessRange');
-        const contrastRange = document.getElementById('contrastRange');
-        const brightnessVal = document.getElementById('brightnessVal');
-        const contrastVal = document.getElementById('contrastVal');
-        const showGridToggle = document.getElementById('showGridToggle');
-        const roundedTileToggle = document.getElementById('roundedTileToggle');
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
+        const partsCard = document.getElementById('parts-card');
+        const partsList = document.getElementById('parts-list');
 
-        let sourceImage = null;
+        // Helper to convert RGB to Hex
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
 
-        // Theme Toggle Handler
-        themeToggle.addEventListener('click', () => {
-            const htmlEl = document.documentElement;
-            if (htmlEl.classList.contains('dark')) {
-                htmlEl.classList.remove('dark');
-                themeIcon.className = "fa-solid fa-sun";
-            } else {
-                htmlEl.classList.add('dark');
-                themeIcon.className = "fa-solid fa-moon";
-            }
-        });
-
-        // Sliders value listeners
-        brightnessRange.addEventListener('input', (e) => {
-            brightnessVal.textContent = e.target.value;
-            if (sourceImage) processAndRenderImage();
-        });
-
-        contrastRange.addEventListener('input', (e) => {
-            contrastVal.textContent = e.target.value;
-            if (sourceImage) processAndRenderImage();
-        });
-
-        paletteSelect.addEventListener('change', () => {
-            if (sourceImage) processAndRenderImage();
-        });
-
-        showGridToggle.addEventListener('change', () => {
-            if (sourceImage) processAndRenderImage();
-        });
-
-        roundedTileToggle.addEventListener('change', () => {
-            if (sourceImage) processAndRenderImage();
-        });
-
-        // File Selection Handlers
-        fileInput.addEventListener('change', (e) => {
+        imageUpload.addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (file) loadImage(file);
-        });
+            if (!file) return;
 
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-indigo-500', 'bg-indigo-500/10');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-indigo-500', 'bg-indigo-500/10');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-indigo-500/10');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                loadImage(file);
-            }
-        });
-
-        function loadImage(file) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    sourceImage = img;
-                    emptyState.classList.add('hidden');
-                    pixelCanvas.classList.remove('hidden');
-                    statsContainer.classList.remove('hidden');
-                    downloadBtn.removeAttribute('disabled');
-                    processAndRenderImage();
+                    // Clear and draw 24x24 downsampled image
+                    ctx.clearRect(0, 0, 24, 24);
+                    ctx.drawImage(img, 0, 0, 24, 24);
+
+                    // Process pixels and count occurrences
+                    const imgData = ctx.getImageData(0, 0, 24, 24);
+                    const data = imgData.data;
+                    const colorCounts = {};
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        const a = data[i + 3];
+
+                        // Skip transparent pixels or treat fully transparent as white/background if desired
+                        if (a < 128) continue;
+
+                        const hex = rgbToHex(r, g, b).toUpperCase();
+                        colorCounts[hex] = (colorCounts[hex] || 0) + 1;
+                    }
+
+                    // Render parts list sorted by count (highest first)
+                    partsList.innerHTML = '';
+                    const sortedColors = Object.entries(colorCounts).sort((a, b) => b[1] - a[1]);
+
+                    sortedColors.forEach(([hex, count]) => {
+                        const item = document.createElement('div');
+                        item.className = 'part-item';
+                        item.innerHTML = `
+                            <div>
+                                <span class="color-preview-box" style="background-color: ${hex};"></span>
+                                <strong>Code / Color:</strong> ${hex}
+                            </div>
+                            <div><strong>${count}</strong> pixels</div>
+                        `;
+                        partsList.appendChild(item);
+                    });
+
+                    canvasContainer.style.display = 'block';
+                    partsCard.style.display = 'block';
+                    downloadBtn.disabled = false;
                 }
                 img.src = event.target.result;
             }
             reader.readAsDataURL(file);
-        }
-
-        processBtn.addEventListener('click', () => {
-            if (sourceImage) {
-                processAndRenderImage();
-            }
         });
 
-        // Core Image Processing & Downsampling Engine
-        function processAndRenderImage() {
-            if (!sourceImage) return;
-
-            const gridWidth = 24;
-            const gridHeight = 24;
-
-            // Offscreen canvas for downsampling source image to 24x24
-            const offScreenCanvas = document.createElement('canvas');
-            offScreenCanvas.width = gridWidth;
-            offScreenCanvas.height = gridHeight;
-            const offCtx = offScreenCanvas.getContext('2d');
-
-            // Disable smoothing for crisp pixel extraction if desired, or let browser interpolate
-            offCtx.imageSmoothingEnabled = true;
-            offCtx.imageSmoothingQuality = 'high';
-
-            // Draw source image into 24x24 bounds
-            offCtx.drawImage(sourceImage, 0, 0, gridWidth, gridHeight);
-            let imgData = offCtx.getImageData(0, 0, gridWidth, gridHeight);
-            let data = imgData.data;
-
-            const brightness = parseInt(brightnessRange.value);
-            const contrast = parseInt(contrastRange.value);
-            const paletteMode = paletteSelect.value;
-            const showGrid = showGridToggle.checked;
-            const roundedTile = roundedTileToggle.checked;
-
-            // Factor contrast
-            const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
-
-            // Perler Bead Standard Palette Simulation
-            const perlerPalette = [
-                [26, 26, 26],     // Black
-                [245, 245, 245],  // White
-                [33, 91, 166],    // Blue
-                [46, 139, 87],    // Green
-                [219, 68, 85],    // Red
-                [244, 162, 97],   // Orange
-                [233, 196, 106],  // Yellow
-                [114, 9, 183],    // Purple
-                [139, 69, 19],    // Brown
-                [180, 180, 180],  // Grey
-                [250, 218, 221],  // Pink
-                [111, 78, 55],    // Dark Brown
-                [90, 150, 120],   // Mint
-                [200, 150, 100],  // Tan
-                [70, 90, 120],    // Slate Blue
-                [230, 230, 210]   // Cream
-            ];
-
-            function getClosestPerlerColor(r, g, b) {
-                let minDist = Infinity;
-                let closest = [r, g, b];
-                for (let color of perlerPalette) {
-                    let dist = Math.sqrt(Math.pow(color[0]-r, 2) + Math.pow(color[1]-g, 2) + Math.pow(color[2]-b, 2));
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closest = color;
-                    }
-                }
-                return closest;
-            }
-
-            // Loop pixels for color adjustments and quantization
-            for (let i = 0; i < data.length; i += 4) {
-                let r = data[i];
-                let g = data[i+1];
-                let b = data[i+2];
-
-                // Brightness
-                r += brightness;
-                g += brightness;
-                b += brightness;
-
-                // Contrast
-                r = factor * (r - 128) + 128;
-                g = factor * (g - 128) + 128;
-                b = factor * (b - 128) + 128;
-
-                // Clamp
-                r = Math.min(255, Math.max(0, r));
-                g = Math.min(255, Math.max(0, g));
-                b = Math.min(255, Math.max(0, b));
-
-                // Palette Filters
-                if (paletteMode === 'beads16') {
-                    let matched = getClosestPerlerColor(r, g, b);
-                    r = matched[0]; g = matched[1]; b = matched[2];
-                } else if (paletteMode === 'pastel') {
-                    r = Math.min(255, r * 0.8 + 50);
-                    g = Math.min(255, g * 0.8 + 50);
-                    b = Math.min(255, b * 0.8 + 50);
-                } else if (paletteMode === 'monochrome') {
-                    let avg = 0.299 * r + 0.587 * g + 0.114 * b;
-                    r = avg; g = avg; b = avg;
-                }
-
-                data[i] = r;
-                data[i+1] = g;
-                data[i+2] = b;
-            }
-
-            // High resolution display rendering canvas setup
-            const scaleFactor = 24; // 24x24 grid rendered at 576x576 for ultra sharp pixels
-            pixelCanvas.width = gridWidth * scaleFactor;
-            pixelCanvas.height = gridHeight * scaleFactor;
-            const ctx = pixelCanvas.getContext('2d');
-
-            ctx.imageSmoothingEnabled = false;
-            ctx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
-
-            // Draw individual grid squares
-            for (let y = 0; y < gridHeight; y++) {
-                for (let x = 0; x < gridWidth; x++) {
-                    const idx = (y * gridWidth + x) * 4;
-                    const r = data[idx];
-                    const g = data[idx+1];
-                    const b = data[idx+2];
-                    const a = data[idx+3] / 255;
-
-                    const posX = x * scaleFactor;
-                    const posY = y * scaleFactor;
-
-                    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
-
-                    if (roundedTile) {
-                        // Draw individual bead/tile with border radius & padding simulation
-                        const padding = 1.5;
-                        const radius = 4;
-                        ctx.beginPath();
-                        ctx.roundRect(posX + padding, posY + padding, scaleFactor - (padding * 2), scaleFactor - (padding * 2), radius);
-                        ctx.fill();
-
-                        // Add subtle inner highlight for plastic bead specular look
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-                        ctx.beginPath();
-                        ctx.roundRect(posX + padding + 2, posY + padding + 2, scaleFactor - (padding * 2) - 4, 3, 2);
-                        ctx.fill();
-                    } else {
-                        // Standard block square
-                        ctx.fillRect(posX, posY, scaleFactor, scaleFactor);
-                    }
-
-                    // Optional grid lines
-                    if (showGrid) {
-                        ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
-                        ctx.lineWidth = 1;
-                        ctx.strokeRect(posX, posY, scaleFactor, scaleFactor);
-                    }
-                }
-            }
-        }
-
-        // Download functionality
-        downloadBtn.addEventListener('click', () => {
-            if (!sourceImage) return;
+        downloadBtn.addEventListener('click', function() {
             const link = document.createElement('a');
             link.download = 'pixel-art-24x24.png';
-            link.href = pixelCanvas.toDataURL('image/png');
+            link.href = canvas.toDataURL('image/png');
             link.click();
         });
     </script>
