@@ -1,216 +1,388 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Art 24x24 Converter & Parts List</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        p.subtitle {
-            color: #7f8c8d;
-            margin-top: 0;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        input[type="file"] {
-            display: none;
-        }
-        .upload-btn {
-            background-color: #3498db;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            display: inline-block;
-            transition: background 0.2s;
-        }
-        .upload-btn:hover {
-            background-color: #2980b9;
-        }
-        #canvas-container {
-            margin-top: 20px;
-            display: inline-block;
-            border: 4px solid #2c3e50;
-            border-radius: 4px;
-            background: #fff;
-            line-height: 0;
-        }
-        canvas {
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            width: 360px;
-            height: 360px;
-            display: block;
-        }
-        .actions {
-            margin-top: 15px;
-        }
-        .btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            margin: 5px;
-            transition: background 0.2s;
-        }
-        .btn:hover {
-            background-color: #27ae60;
-        }
-        .btn:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-        #parts-list {
-            text-align: left;
-            margin-top: 15px;
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 10px;
-            background: #fafafa;
-        }
-        .part-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 6px 10px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
-        .color-preview-box {
-            width: 18px;
-            height: 18px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-            display: inline-block;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PixelGrid · Pixel Hobby pattern maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0b1d; --panel:#16152e; --panel2:#1d1c3b; --line:#2c2a55; --txt:#f2f1ff; --mut:#9a98c8;
+  --a:#ff5fa2; --b:#ffb347; --c:#5be7a9; --d:#5cc8ff; --e:#a78bfa;
+  --grad:linear-gradient(90deg,var(--a),var(--b),var(--c),var(--d),var(--e));
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#2a1f5a55,transparent),radial-gradient(900px 500px at 100% 0,#0f3b5a55,transparent),var(--bg);
+  color:var(--txt);font-family:'Fredoka',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+header{padding:22px 18px 6px;max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:46px;border-radius:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:7px;background:var(--panel2);border:1px solid var(--line)}
+.logo i{border-radius:3px;display:block}
+h1{margin:0;font-size:1.6rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{margin:0;color:var(--mut);font-size:.9rem}
+main{max-width:1200px;margin:0 auto;padding:14px 18px 40px;display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 30px #0006}
+.card h2{margin:0 0 12px;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.stack{display:grid;gap:16px}
+#drop{border:2px dashed var(--line);border-radius:16px;padding:22px 12px;text-align:center;cursor:pointer;position:relative;transition:.2s;background:#0c0b1d66}
+#drop:hover,#drop.over{border-color:var(--a);background:#ff5fa211;transform:translateY(-2px)}
+#drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#drop .big{font-size:2rem}
+#drop small{color:var(--mut)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{font-family:inherit;font-weight:600;font-size:.9rem;border:0;border-radius:12px;padding:10px 14px;cursor:pointer;color:var(--txt);background:var(--panel2);border:1px solid var(--line);transition:.15s}
+button:hover{transform:translateY(-1px);border-color:var(--e)}
+button:active{transform:scale(.96)}
+button.primary{background:var(--grad);color:#1a1033;border:0;box-shadow:0 6px 20px #ff5fa244}
+button.on{background:var(--e);color:#150f30;border-color:var(--e)}
+button:disabled{opacity:.4;pointer-events:none}
+label.f{display:block;font-size:.85rem;color:var(--mut);margin-bottom:6px}
+.sl{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;margin-bottom:12px;font-size:.88rem}
+.sl b{font-weight:600;color:var(--txt);font-variant-numeric:tabular-nums}
+input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--a)}
+.tg{display:flex;justify-content:space-between;align-items:center;font-size:.9rem;margin:8px 0;cursor:pointer}
+input[type=checkbox]{accent-color:var(--c);width:18px;height:18px}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;padding:8px 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.stat span{display:block;font-size:.7rem;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
+.stat b{font-size:1.25rem}
+.stat small{display:block;color:var(--mut);font-size:.72rem}
+#wrap{background:#0c0b1d;border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;justify-content:center;position:relative}
+canvas#cv{width:100%;max-width:620px;height:auto;aspect-ratio:1;image-rendering:pixelated;border-radius:10px;touch-action:manipulation}
+#empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--mut)}
+#hover{height:22px;margin-top:8px;font-size:.85rem;color:var(--mut);text-align:center}
+#hover b{color:var(--txt)}
+.bar{height:14px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--grad);transition:width .4s cubic-bezier(.2,1.4,.4,1)}
+#prog{display:flex;justify-content:space-between;font-size:.85rem;margin:14px 0 6px}
+#parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:14px}
+.part{display:flex;align-items:center;gap:10px;background:var(--panel2);border:2px solid transparent;border-radius:14px;padding:8px 10px;cursor:pointer;transition:.15s;user-select:none}
+.part:hover{border-color:var(--line)}
+.part.focus{border-color:var(--a);box-shadow:0 0 0 3px #ff5fa233}
+.part.done{opacity:.55}
+.part.done .code{text-decoration:line-through}
+.sw{width:34px;height:34px;border-radius:10px;flex:none;border:1px solid #ffffff33;box-shadow:inset 0 3px 0 #ffffff33}
+.part .code{font-weight:700;font-size:1.05rem}
+.part .meta{font-size:.78rem;color:var(--mut)}
+.part .n{margin-left:auto;text-align:right;font-weight:700;font-size:1.1rem}
+.part .n small{display:block;font-weight:400;color:var(--mut);font-size:.7rem}
+.hint{color:var(--mut);font-size:.82rem;margin:10px 0 0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);background:var(--c);color:#06281b;padding:10px 18px;border-radius:99px;font-weight:600;transition:.3s;z-index:20}
+#toast.show{transform:translate(-50%,0)}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:10}
+footer{text-align:center;color:var(--mut);font-size:.78rem;padding:0 18px 28px}
+</style>
 </head>
 <body>
+<header>
+  <div class="logo"><i style="background:#ff5fa2"></i><i style="background:#ffb347"></i><i style="background:#5be7a9"></i><i style="background:#5cc8ff"></i><i style="background:#a78bfa"></i><i style="background:#ff5fa2"></i><i style="background:#5be7a9"></i><i style="background:#ffb347"></i><i style="background:#5cc8ff"></i></div>
+  <div><h1>PixelGrid</h1><p>Photo → real Pixel Hobby colours + shopping list</p></div>
+</header>
 
-    <h1>24x24 Pixel Art Converter</h1>
-    <p class="subtitle">Upload any image to generate a solid-color 24x24 grid with a precise parts count.</p>
+<main>
+  <section class="stack">
+    <div class="card">
+      <h2>1 · Image</h2>
+      <div id="drop"><input type="file" id="file" accept="image/*"><div class="big">🖼️</div><b>Drop, click or paste an image</b><br><small>PNG with transparency leaves gaps</small></div>
+      <div class="row" style="margin-top:10px"><button id="demo">🎲 Try a demo</button></div>
+    </div>
 
     <div class="card">
-        <label for="imageUpload" class="upload-btn">Choose Image</label>
-        <input type="file" id="imageUpload" accept="image/*">
-        
-        <div id="canvas-container" style="display: none;">
-            <canvas id="pixelCanvas" width="24" height="24"></canvas>
-        </div>
+      <h2>2 · Settings</h2>
+      <label class="f">Grid size (pixels per side)</label>
+      <div class="seg" id="sizes" style="margin-bottom:14px"></div>
+      <label class="f">Framing</label>
+      <div class="seg" id="fits" style="margin-bottom:14px"><button data-v="cover" class="on">Crop to fill</button><button data-v="contain">Fit whole image</button></div>
 
-        <div class="actions">
-            <button id="downloadBtn" class="btn" disabled>Download 24x24 Image</button>
-        </div>
+      <div class="sl"><span>🎨 Max colours</span><b id="vcap">20</b><input type="range" id="cap" min="2" max="100" value="20"></div>
+      <div class="sl"><span>☀️ Brightness</span><b id="vbri">0</b><input type="range" id="bri" min="-100" max="100" value="0"></div>
+      <div class="sl"><span>◐ Contrast</span><b id="vcon">0</b><input type="range" id="con" min="-100" max="100" value="0"></div>
+      <div class="sl"><span>🌈 Saturation</span><b id="vsat">0</b><input type="range" id="sat" min="-100" max="100" value="0"></div>
+
+      <label class="tg"><span>Dithering (smoother gradients)</span><input type="checkbox" id="dither"></label>
+      <label class="tg"><span>Rounded tiles</span><input type="checkbox" id="round" checked></label>
+      <label class="tg"><span>Show colour codes</span><input type="checkbox" id="codes"></label>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="go" style="flex:1">✨ Replay build</button>
+        <button id="dl" title="Download PNG" disabled>⬇ PNG</button>
+      </div>
     </div>
+  </section>
 
-    <div class="card" id="parts-card" style="display: none;">
-        <h3>Pixel Count Breakdown</h3>
-        <p style="font-size: 13px; color: #666; margin-top:0;">Number of pixels needed per color code:</p>
-        <div id="parts-list"></div>
+  <section class="card">
+    <h2>3 · Pattern &amp; shopping list</h2>
+    <div class="stats" id="stats" hidden>
+      <div class="stat"><span>Pixels</span><b id="sPix">0</b><small id="sSize"></small></div>
+      <div class="stat"><span>Colours</span><b id="sCol">0</b></div>
+      <div class="stat"><span>Pixelsquares</span><b id="sSq">0</b><small>140 pixels each</small></div>
+      <div class="stat"><span>Cost</span><b id="sCost">£0</b><small id="sBulk"></small></div>
     </div>
+    <div id="wrap"><canvas id="cv" width="672" height="672"></canvas><div id="empty">Upload an image or try the demo 👆</div></div>
+    <div id="hover">&nbsp;</div>
 
-    <script>
-        const imageUpload = document.getElementById('imageUpload');
-        const canvas = document.getElementById('pixelCanvas');
-        const ctx = canvas.getContext('2d');
-        const canvasContainer = document.getElementById('canvas-container');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const partsCard = document.getElementById('parts-card');
-        const partsList = document.getElementById('parts-list');
+    <div id="listArea" hidden>
+      <div id="prog"><span id="progTxt">0 / 0 placed</span><span id="progPct">0%</span></div>
+      <div class="bar"><i id="progBar"></i></div>
+      <div class="row" style="margin-top:14px">
+        <button id="copy">📋 Copy list</button>
+        <button id="clear">Reset ticks</button>
+      </div>
+      <div id="parts"></div>
+      <p class="hint">Tap a colour to spotlight it on the grid. Tick the box once you've placed those pixels.</p>
+    </div>
+  </section>
+</main>
+<footer>Pixels are approx 2.5&nbsp;mm square. Colours are sampled from the shop's swatch photos, so check against real pixels before a big order.</footer>
+<div id="toast"></div>
+<canvas id="fx"></canvas>
 
-        // Helper to convert RGB to Hex
-        function rgbToHex(r, g, b) {
-            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-        }
+<script>
+/* ---------- Pixel Hobby standard colours (code → sampled hex) ---------- */
+const PAL_HEX = {"100":"#dde1e5","101":"#dbc89c","102":"#8b3134","103":"#e3bfc0","104":"#8f6560","105":"#b490c3","106":"#3a3844","108":"#959785","109":"#b2c7e7","110":"#515d9f","111":"#a1b5df","112":"#8899d4","113":"#4f5a84","114":"#b1c3ea","115":"#779380","116":"#a7daa0","117":"#efef6d","118":"#cae259","120":"#a2a9ad","122":"#a181da","124":"#ddc7fb","126":"#310603","129":"#ca9d9b","130":"#715141","131":"#ad6945","132":"#fffbcd","133":"#f3ef62","134":"#aa4843","135":"#444d4f","136":"#445572","137":"#526593","139":"#ffd9ff","141":"#a7b2c2","143":"#6b8b59","144":"#b03e3e","145":"#6587db","146":"#bb4452","147":"#755a8c","148":"#000733","151":"#fff9ff","152":"#8e99de","153":"#a1b6f9","155":"#b93832","156":"#c84139","157":"#e4887f","158":"#e48764","159":"#efb3a1","160":"#ffffd1","161":"#b66d55","162":"#45684f","163":"#acc7a9","164":"#def3cb","167":"#eadba5","170":"#8d6860","171":"#586164","172":"#7c8282","173":"#d7d3d2","175":"#d6c597","176":"#3c1a00","177":"#c89b6b","178":"#ac8451","179":"#ba9562","180":"#d8b167","181":"#e7db43","182":"#f1f46e","183":"#3c3431","185":"#d1dad9","187":"#a4b743","189":"#bacb63","191":"#d7d4c4","192":"#5a7462","193":"#6d938a","194":"#87b09d","196":"#4a6f58","197":"#365ac6","198":"#6fb6ea","201":"#8fa485","202":"#87a287","203":"#c0cfb2","204":"#646f67","206":"#7f659d","207":"#794b83","208":"#9e5098","209":"#c181c4","210":"#4c6a56","211":"#607b5a","213":"#d1f6e4","215":"#9db358","216":"#849fdf","217":"#455c68","218":"#ac5978","219":"#c2af36","220":"#c4517c","223":"#f0b4ce","224":"#b20000","227":"#898569","228":"#b0a77f","229":"#a9a389","230":"#eddbca","231":"#abb69e","233":"#c2bb97","234":"#727468","236":"#9ea58f","237":"#bfc1b4","239":"#dbc08b","240":"#ebd477","241":"#835b14","242":"#467455","244":"#528155","245":"#004900","246":"#75b94a","249":"#9d477f","250":"#8d1700","251":"#cd6a39","252":"#fff0b1","253":"#efcf51","255":"#f4e175","256":"#eec741","257":"#d4a94e","258":"#6d7440","262":"#cbcc82","263":"#ffffd6","264":"#d4c49d","266":"#f3af3f","267":"#e7ad43","269":"#eed465","270":"#928c3e","271":"#e8e6ba","272":"#c8e9e2","273":"#e9c6b6","274":"#dda38e","275":"#f29b91","276":"#f4d2c6","277":"#9fa29b","278":"#bfe4a8","283":"#464243","284":"#b5cc76","288":"#a8d8fb","290":"#8597d0","291":"#8d96b5","292":"#425288","293":"#3e66b5","294":"#7391f8","296":"#b3c2ec","297":"#6b5c52","298":"#000c00","300":"#78bce4","302":"#889ede","303":"#7a525a","306":"#883e33","307":"#eacdca","309":"#3d4894","310":"#c2af84","311":"#3f4672","312":"#4d5c9f","314":"#3d6695","315":"#aac0f5","316":"#cad1da","317":"#765a40","319":"#a6a53f","321":"#a58e38","322":"#d1bc5e","323":"#4b4439","325":"#6a6041","327":"#aaa287","330":"#715c44","331":"#3e5f51","332":"#b13c3f","336":"#47674f","339":"#b75341","340":"#6d3a3f","341":"#3d6f38","342":"#36831a","343":"#8dd40b","345":"#397942","347":"#42705b","348":"#66d188","350":"#83395a","351":"#97456e","353":"#884434","354":"#b05a3e","355":"#a55b3b","357":"#4b6676","358":"#5b6a63","359":"#a2b5b5","362":"#060800","363":"#96a3ae","364":"#4f5b4d","365":"#5c6a46","366":"#374334","369":"#363e5a","370":"#42989a","371":"#e4c779","374":"#e0bdad","375":"#e7d3c2","376":"#fcdcb8","381":"#74c4c5","385":"#fcd6c7","388":"#e8d2b9","389":"#f9920f","391":"#e3c448","392":"#f5e849","393":"#665448","394":"#b57f15","395":"#b48f09","396":"#455756","398":"#507143","400":"#4a706d","401":"#78b0a5","402":"#9fd4c1","403":"#477cda","404":"#477cda","407":"#e6e8a6","408":"#53544f","409":"#7b8b7a","410":"#9da89e","411":"#979d9d","413":"#fff9d8","414":"#c6c2b4","415":"#a07f9d","416":"#afa7ba","418":"#e1d655","419":"#cec79c","421":"#90a276","425":"#fcf6b0","428":"#54160c","429":"#df9345","430":"#e59771","433":"#91a561","434":"#adbd82","435":"#9d3f64","441":"#3f464e","442":"#b47baa","445":"#b27183","447":"#7f6875","448":"#b76560","454":"#88504a","456":"#57272c","458":"#c15472","459":"#c2858e","461":"#775f33","462":"#59539e","463":"#544c75","464":"#394b65","465":"#8c94af","466":"#b1baca","467":"#fffff4","468":"#b8c3df","469":"#5983c0","470":"#7da2a8","473":"#506870","474":"#e6d9d7","479":"#9c6742","480":"#ca5360","481":"#c69275","483":"#534f44","484":"#4e4627","485":"#353c2a","486":"#57604c","487":"#545c5f","488":"#ac3e36","489":"#6a4147","491":"#a83c61","493":"#c47e9a","494":"#4b5ca5","495":"#40616e","496":"#0c3565","497":"#466386","498":"#aeb9c1","499":"#44959f","501":"#509488","502":"#556d54","503":"#66916b","505":"#3b5c53","506":"#f0f452","507":"#d4c844","509":"#ecdb35","511":"#c19981","513":"#835531","514":"#eaa018","518":"#91494c","519":"#b96675","520":"#cc5d72","521":"#5e666d","522":"#836e9b","523":"#c59fcc","526":"#7e97d0","527":"#a8bae4","528":"#c7d4f3","529":"#4a5cce","530":"#498fd4","531":"#4a83b9","533":"#5da0c1","534":"#405855","535":"#508a83","536":"#66a5a4","537":"#468a82","538":"#59a398","539":"#c9bf47","540":"#ce9719","541":"#c8a35d","543":"#e5bc75","544":"#744340","546":"#a68f78","547":"#9f8c8e","548":"#afa6a7","549":"#8d8162","550":"#a59a80","551":"#bfb9a1","552":"#f0f0f0","553":"#d2d3ce","560":"#fc9e18","561":"#b9b9b9"};
+const PIXEL_MM = 2.5, PER_SQUARE = 140, PRICE = 0.31, PRICE_BULK = 0.26;
 
-        imageUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+/* ---------- colour maths ---------- */
+function rgb2lab(r,g,b){
+  const f=v=>{v/=255;return v>.04045?Math.pow((v+.055)/1.055,2.4):v/12.92};
+  const R=f(r),G=f(g),B=f(b);
+  let x=(R*.4124+G*.3576+B*.1805)/.95047, y=(R*.2126+G*.7152+B*.0722), z=(R*.0193+G*.1192+B*.9505)/1.08883;
+  const h=t=>t>.008856?Math.cbrt(t):7.787*t+16/116;
+  x=h(x);y=h(y);z=h(z);
+  return [116*y-16,500*(x-y),200*(y-z)];
+}
+const PAL = Object.entries(PAL_HEX).map(([code,hex])=>{
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return {code,hex,r,g,b,lab:rgb2lab(r,g,b),lum:(.299*r+.587*g+.114*b)};
+});
+const d2=(a,b)=>{const x=a[0]-b[0],y=a[1]-b[1],z=a[2]-b[2];return x*x+y*y+z*z};
+function nearest(r,g,b,subset){
+  const l=rgb2lab(r,g,b);let best=-1,bd=1e18;
+  for(let k=0;k<subset.length;k++){const i=subset[k];const d=d2(l,PAL[i].lab);if(d<bd){bd=d;best=i}}
+  return best;
+}
 
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    // Clear and draw 24x24 downsampled image
-                    ctx.clearRect(0, 0, 24, 24);
-                    ctx.drawImage(img, 0, 0, 24, 24);
+/* ---------- state ---------- */
+const $=id=>document.getElementById(id);
+const cv=$('cv'),ctx=cv.getContext('2d');
+let src=null, sqCache={}, size=24, fit='cover';
+let cells=[], parts=[], focus=null, placed=new Set(), animStart=null, celebrated=false;
+const CELL=28;
 
-                    // Process pixels and count occurrences
-                    const imgData = ctx.getImageData(0, 0, 24, 24);
-                    const data = imgData.data;
-                    const colorCounts = {};
+/* ---------- UI wiring ---------- */
+[16,24,32,48].forEach(n=>{
+  const b=document.createElement('button');b.textContent=n+'×'+n;b.dataset.v=n;if(n===24)b.className='on';
+  b.onclick=()=>{size=n;[...$('sizes').children].forEach(c=>c.classList.toggle('on',c===b));run(true)};
+  $('sizes').appendChild(b);
+});
+[...$('fits').children].forEach(b=>b.onclick=()=>{fit=b.dataset.v;[...$('fits').children].forEach(c=>c.classList.toggle('on',c===b));run(false)});
+[['cap','vcap'],['bri','vbri'],['con','vcon'],['sat','vsat']].forEach(([i,v])=>{
+  $(i).addEventListener('input',()=>{$(v).textContent=$(i).value;run(false)});
+});
+['dither','round','codes'].forEach(i=>$(i).addEventListener('change',()=>run(false)));
+$('go').onclick=()=>run(true);
+$('demo').onclick=()=>{loadDemo()};
+$('clear').onclick=()=>{placed.clear();celebrated=false;renderParts();draw()};
+$('copy').onclick=()=>{
+  const t=parts.map(p=>p.n+' × #'+PAL[p.i].code).join(', ');
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Copied: '+t.slice(0,60)+(t.length>60?'…':'')),()=>{prompt('Copy this:',t)});
+};
+$('dl').onclick=()=>{
+  const c=document.createElement('canvas');c.width=c.height=size*CELL;
+  paint(c.getContext('2d'),{full:true});
+  const a=document.createElement('a');a.download='pixelgrid-'+size+'x'+size+'.png';a.href=c.toDataURL('image/png');a.click();
+};
 
-                    for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i];
-                        const g = data[i + 1];
-                        const b = data[i + 2];
-                        const a = data[i + 3];
+const drop=$('drop');
+$('file').onchange=e=>e.target.files[0]&&loadFile(e.target.files[0]);
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('over')};
+drop.ondragleave=()=>drop.classList.remove('over');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');const f=e.dataTransfer.files[0];f&&f.type.startsWith('image/')&&loadFile(f)};
+window.addEventListener('paste',e=>{const it=[...(e.clipboardData?.items||[])].find(i=>i.type.startsWith('image/'));if(it)loadFile(it.getAsFile())});
 
-                        // Skip transparent pixels or treat fully transparent as white/background if desired
-                        if (a < 128) continue;
+function loadFile(f){
+  const r=new FileReader();
+  r.onload=ev=>{const im=new Image();im.onload=()=>setSource(im);im.src=ev.target.result};
+  r.readAsDataURL(f);
+}
+function loadDemo(){
+  const c=document.createElement('canvas');c.width=c.height=400;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,400,400);g.addColorStop(0,'#5cc8ff');g.addColorStop(1,'#a78bfa');x.fillStyle=g;x.fillRect(0,0,400,400);
+  x.fillStyle='#ffe066';x.beginPath();x.arc(320,80,44,0,7);x.fill();
+  x.fillStyle='#ff3b6b';x.beginPath();x.moveTo(200,330);x.bezierCurveTo(60,230,90,110,200,170);x.bezierCurveTo(310,110,340,230,200,330);x.fill();
+  x.fillStyle='#ffffff66';x.beginPath();x.ellipse(150,170,22,12,-.6,0,7);x.fill();
+  setSource(c);
+}
+function setSource(im){src=im;sqCache={};placed.clear();celebrated=false;focus=null;$('empty').hidden=true;$('dl').disabled=false;run(true)}
 
-                        const hex = rgbToHex(r, g, b).toUpperCase();
-                        colorCounts[hex] = (colorCounts[hex] || 0) + 1;
-                    }
+/* ---------- image → square canvas → grid sample ---------- */
+function square(){
+  if(sqCache[fit])return sqCache[fit];
+  const w=src.naturalWidth||src.width,h=src.naturalHeight||src.height;
+  const S=fit==='cover'?Math.min(w,h):Math.max(w,h);
+  const k=Math.min(1,1024/S), T=Math.round(S*k);
+  const c=document.createElement('canvas');c.width=c.height=T;const x=c.getContext('2d');
+  x.imageSmoothingQuality='high';
+  if(fit==='cover')x.drawImage(src,(w-S)/2,(h-S)/2,S,S,0,0,T,T);
+  else x.drawImage(src,0,0,w,h,(T-w*k)/2+0,(T-h*k)/2+0,w*k,h*k);
+  return sqCache[fit]=c;
+}
+function sample(n){
+  let cur=square();
+  while(cur.width/2>=n*2){
+    const c=document.createElement('canvas');c.width=c.height=Math.floor(cur.width/2);
+    const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(cur,0,0,c.width,c.height);cur=c;
+  }
+  const c=document.createElement('canvas');c.width=c.height=n;const x=c.getContext('2d');
+  x.imageSmoothingQuality='high';x.drawImage(cur,0,0,n,n);
+  return x.getImageData(0,0,n,n).data;
+}
 
-                    // Render parts list sorted by count (highest first)
-                    partsList.innerHTML = '';
-                    const sortedColors = Object.entries(colorCounts).sort((a, b) => b[1] - a[1]);
+/* ---------- quantise ---------- */
+function quantise(){
+  const n=size,data=sample(n);
+  const bri=+$('bri').value*2.55,con=+$('con').value,sat=1+(+$('sat').value)/100;
+  const cf=(259*(con+255))/(255*(259-con));
+  const buf=new Float32Array(n*n*3),live=new Uint8Array(n*n);
+  for(let i=0;i<n*n;i++){
+    if(data[i*4+3]<128)continue;live[i]=1;
+    let r=data[i*4]+bri,g=data[i*4+1]+bri,b=data[i*4+2]+bri;
+    r=cf*(r-128)+128;g=cf*(g-128)+128;b=cf*(b-128)+128;
+    const y=.299*r+.587*g+.114*b;r=y+(r-y)*sat;g=y+(g-y)*sat;b=y+(b-y)*sat;
+    buf[i*3]=Math.min(255,Math.max(0,r));buf[i*3+1]=Math.min(255,Math.max(0,g));buf[i*3+2]=Math.min(255,Math.max(0,b));
+  }
+  // pass 1: nearest over the whole range
+  const all=PAL.map((_,i)=>i),counts=new Map();
+  for(let i=0;i<n*n;i++)if(live[i]){const k=nearest(buf[i*3],buf[i*3+1],buf[i*3+2],all);counts.set(k,(counts.get(k)||0)+1)}
+  // merge the least valuable colours until we're under the cap
+  const cap=+$('cap').value;
+  while(counts.size>cap){
+    let bi=-1,bj=-1,bc=1e18;
+    for(const [i,ci] of counts){
+      let nd=1e18,nj=-1;
+      for(const [j] of counts){if(j===i)continue;const d=d2(PAL[i].lab,PAL[j].lab);if(d<nd){nd=d;nj=j}}
+      const cost=ci*(nd+1);if(cost<bc){bc=cost;bi=i;bj=nj}
+    }
+    counts.set(bj,counts.get(bj)+counts.get(bi));counts.delete(bi);
+  }
+  const subset=[...counts.keys()];
+  // pass 2: final mapping (optionally dithered) inside the allowed colours
+  const out=new Int16Array(n*n).fill(-1);
+  const dith=$('dither').checked;
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+    const i=y*n+x;if(!live[i])continue;
+    const r=Math.min(255,Math.max(0,buf[i*3])),g=Math.min(255,Math.max(0,buf[i*3+1])),b=Math.min(255,Math.max(0,buf[i*3+2]));
+    const k=nearest(r,g,b,subset);out[i]=k;
+    if(dith){
+      const er=r-PAL[k].r,eg=g-PAL[k].g,eb=b-PAL[k].b;
+      const push=(xx,yy,w)=>{if(xx<0||xx>=n||yy>=n)return;const j=yy*n+xx;if(!live[j])return;buf[j*3]+=er*w;buf[j*3+1]+=eg*w;buf[j*3+2]+=eb*w};
+      push(x+1,y,7/16);push(x-1,y+1,3/16);push(x,y+1,5/16);push(x+1,y+1,1/16);
+    }
+  }
+  return out;
+}
 
-                    sortedColors.forEach(([hex, count]) => {
-                        const item = document.createElement('div');
-                        item.className = 'part-item';
-                        item.innerHTML = `
-                            <div>
-                                <span class="color-preview-box" style="background-color: ${hex};"></span>
-                                <strong>Code / Color:</strong> ${hex}
-                            </div>
-                            <div><strong>${count}</strong> pixels</div>
-                        `;
-                        partsList.appendChild(item);
-                    });
+function run(animate){
+  if(!src)return;
+  cells=quantise();
+  const m=new Map();cells.forEach(k=>{if(k>=0)m.set(k,(m.get(k)||0)+1)});
+  parts=[...m].map(([i,n])=>({i,n})).sort((a,b)=>b.n-a.n);
+  placed=new Set([...placed].filter(i=>m.has(i)));
+  if(focus!==null&&!m.has(focus))focus=null;
+  canvasSize();stats();renderParts();
+  if(animate)startAnim();else draw();
+}
+function canvasSize(){cv.width=cv.height=size*CELL}
 
-                    canvasContainer.style.display = 'block';
-                    partsCard.style.display = 'block';
-                    downloadBtn.disabled = false;
-                }
-                img.src = event.target.result;
-            }
-            reader.readAsDataURL(file);
-        });
+/* ---------- stats + list ---------- */
+const gbp=v=>'£'+v.toFixed(2);
+function stats(){
+  const tot=parts.reduce((a,p)=>a+p.n,0),sq=parts.reduce((a,p)=>a+Math.ceil(p.n/PER_SQUARE),0);
+  $('stats').hidden=false;$('listArea').hidden=false;
+  $('sPix').textContent=tot;$('sSize').textContent=(size*PIXEL_MM)+' × '+(size*PIXEL_MM)+' mm';
+  $('sCol').textContent=parts.length;$('sSq').textContent=sq;
+  $('sCost').textContent=gbp(sq*PRICE);$('sBulk').textContent=gbp(sq*PRICE_BULK)+' at bulk rate';
+}
+function renderParts(){
+  const box=$('parts');box.innerHTML='';
+  parts.forEach(p=>{
+    const c=PAL[p.i],el=document.createElement('div');
+    el.className='part'+(focus===p.i?' focus':'')+(placed.has(p.i)?' done':'');
+    el.innerHTML='<div class="sw" style="background:'+c.hex+'"></div><div><div class="code">#'+c.code+'</div><div class="meta">'+c.hex+'</div></div>'+
+      '<div class="n">× '+p.n+'<small>'+Math.ceil(p.n/PER_SQUARE)+' sq</small></div><input type="checkbox" '+(placed.has(p.i)?'checked':'')+'>';
+    el.onclick=e=>{if(e.target.tagName==='INPUT')return;focus=focus===p.i?null:p.i;renderParts();draw()};
+    el.querySelector('input').onchange=e=>{e.target.checked?placed.add(p.i):placed.delete(p.i);if(e.target.checked)pop(e.target);renderParts();draw()};
+    box.appendChild(el);
+  });
+  const tot=parts.reduce((a,p)=>a+p.n,0),done=parts.filter(p=>placed.has(p.i)).reduce((a,p)=>a+p.n,0);
+  const pct=tot?Math.round(done/tot*100):0;
+  $('progTxt').textContent='🧩 '+done+' / '+tot+' placed';$('progPct').textContent=pct+'%';$('progBar').style.width=pct+'%';
+  if(tot&&done===tot&&!celebrated){celebrated=true;confetti();toast('🎉 Pattern complete!')}
+  if(done<tot)celebrated=false;
+}
+function pop(){confettiBurst(18)}
 
-        downloadBtn.addEventListener('click', function() {
-            const link = document.createElement('a');
-            link.download = 'pixel-art-24x24.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        });
-    </script>
+/* ---------- drawing ---------- */
+const ease=t=>{const c=1.70158,c3=c+1;return 1+c3*Math.pow(t-1,3)+c*Math.pow(t-1,2)};
+function paint(g,o){
+  const t=o.full||animStart==null?1e9:o.now-animStart;
+  g.clearRect(0,0,size*CELL,size*CELL);
+  const rounded=$('round').checked,codes=$('codes').checked&&size<=32;
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+    const k=cells[y*size+x];if(k<0)continue;
+    let sc=1;if(t<1e8){const p=Math.min(1,Math.max(0,(t-(x+y)*22)/320));if(p<=0)continue;sc=ease(p)}
+    const c=PAL[k],half=(CELL/2-1.5)*sc,cx=x*CELL+CELL/2,cy=y*CELL+CELL/2;
+    g.globalAlpha=(!o.full&&focus!==null&&focus!==k)?.14:1;
+    g.fillStyle=c.hex;g.beginPath();
+    if(rounded&&g.roundRect)g.roundRect(cx-half,cy-half,half*2,half*2,6*sc);else g.rect(cx-half,cy-half,half*2,half*2);
+    g.fill();
+    if(rounded){g.fillStyle='rgba(255,255,255,.2)';g.beginPath();g.roundRect?g.roundRect(cx-half+3,cy-half+3,half*2-6,3,1.5):g.rect(cx-half+3,cy-half+3,half*2-6,3);g.fill()}
+    const dark=c.lum>150;
+    if(!o.full&&placed.has(k)){g.fillStyle=dark?'#000a':'#fffd';g.font='700 '+(CELL*.55)+'px system-ui';g.textAlign='center';g.textBaseline='middle';g.fillText('✓',cx,cy+1)}
+    else if(codes&&sc>.8){g.fillStyle=dark?'#000b':'#fffe';g.font='600 '+(size>24?9:10)+'px system-ui';g.textAlign='center';g.textBaseline='middle';g.fillText(c.code,cx,cy+1)}
+  }
+  g.globalAlpha=1;
+}
+function draw(){paint(ctx,{now:performance.now()})}
+function startAnim(){
+  animStart=performance.now();const dur=size*2*22+420;
+  const tick=now=>{paint(ctx,{now});if(now-animStart<dur)requestAnimationFrame(tick);else{animStart=null;draw()}};
+  requestAnimationFrame(tick);
+}
+
+/* ---------- hover readout ---------- */
+function cellAt(e){
+  const r=cv.getBoundingClientRect(),p=e.touches?e.touches[0]:e;
+  const x=Math.floor((p.clientX-r.left)/r.width*size),y=Math.floor((p.clientY-r.top)/r.height*size);
+  return (x<0||y<0||x>=size||y>=size)?null:{x,y,k:cells[y*size+x]};
+}
+function hov(e){
+  if(!cells.length)return;const c=cellAt(e);
+  $('hover').innerHTML=(!c||c.k<0)?'&nbsp;':'<b>#'+PAL[c.k].code+'</b> · '+PAL[c.k].hex+' · row '+(c.y+1)+', col '+(c.x+1);
+}
+cv.addEventListener('mousemove',hov);cv.addEventListener('mouseleave',()=>$('hover').innerHTML='&nbsp;');
+cv.addEventListener('click',e=>{const c=cellAt(e);if(!c||c.k<0)return;focus=focus===c.k?null:c.k;renderParts();draw()});
+
+/* ---------- fun stuff ---------- */
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
+const fx=$('fx'),fg=fx.getContext('2d');let ps=[],raf=0;
+function confettiBurst(n,ox,oy){
+  fx.width=innerWidth;fx.height=innerHeight;
+  const cols=parts.length?parts.map(p=>PAL[p.i].hex):['#ff5fa2','#ffb347','#5be7a9'];
+  for(let i=0;i<n;i++)ps.push({x:ox??innerWidth/2,y:oy??innerHeight*.6,vx:(Math.random()-.5)*10,vy:-Math.random()*12-3,s:5+Math.random()*6,c:cols[i%cols.length],l:70+Math.random()*40});
+  if(!raf)raf=requestAnimationFrame(fxTick);
+}
+function confetti(){confettiBurst(160,innerWidth/2,innerHeight*.35)}
+function fxTick(){
+  fg.clearRect(0,0,fx.width,fx.height);
+  ps=ps.filter(p=>p.l-->0);
+  ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;fg.fillStyle=p.c;fg.fillRect(p.x,p.y,p.s,p.s)});
+  raf=ps.length?requestAnimationFrame(fxTick):0;if(!raf)fg.clearRect(0,0,fx.width,fx.height);
+}
+</script>
 </body>
 </html>
